@@ -1,26 +1,30 @@
 'use client'
 import React, { useState } from 'react'
-
 import { Button } from '@/components/ui/button'
 import { Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react'
+import { UploadFileProps } from '../page';
+interface ResultType{
+  setResult: (result:UploadFileProps ) => void;
+}
 
-const FileUpload = () => {
+const FileUpload = ({setResult}:ResultType) => {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0])
-      setMessage(null)
-      setError(null)
+      setFile(e.target.files[0]);
+      setMessage(null);
+      setError(null);
     }
   }
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     setDragOver(true)
   }
 

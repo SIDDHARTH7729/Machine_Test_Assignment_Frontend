@@ -23,7 +23,7 @@ export async function POST(req:NextRequest){
         },{
           headers:{
             "Content-Type":"application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzViZDc0MGExNmFkYjU3ZjFkYjFiYSIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoic3Nzc3Nzc0BnbWFpbC5jb20iLCJpYXQiOjE3NDg1MDA1MjcsImV4cCI6MTc0ODU4NjkyN30.UgnGuP3FdfPFMi6dt1ySnCPs9suwYIec7IcxFwoc2RI`
+            Authorization: `Bearer `
           }
         })
 

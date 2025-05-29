@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzViZDc0MGExNmFkYjU3ZjFkYjFiYSIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoic3Nzc3Nzc0BnbWFpbC5jb20iLCJpYXQiOjE3NDg1MDA1MjcsImV4cCI6MTc0ODU4NjkyN30.UgnGuP3FdfPFMi6dt1ySnCPs9suwYIec7IcxFwoc2RI`,
+                    Authorization: `Bearer `,
                 },
             }
         );
@@ -46,7 +46,3 @@ export async function POST(req: NextRequest) {
         });
     }
 }
-
-/*
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzViZGI2MGExNmFkYjU3ZjFkYjFiZiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoic3Nzc3Nzc3NAZ21haWwuY29tIiwiaWF0IjoxNzQ4NDU1OTQyLCJleHAiOjE3NDg0NjMxNDJ9._l-9IgV5Tdi0JlC8aSuP07ukzmrrxrCz6WA9w_wZhbU
- */
