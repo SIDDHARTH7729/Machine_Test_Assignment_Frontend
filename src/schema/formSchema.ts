@@ -4,7 +4,8 @@ const formSchema = z.object({
   email: z
     .string()
     .min(1, { message: "Email is required" })
-    .email({ message: "Invalid email address" }),
+    .email({ message: "Invalid email address" })
+    .endsWith("@gmail.com",{ message: "Email must end with @gmail.com" }),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters" })

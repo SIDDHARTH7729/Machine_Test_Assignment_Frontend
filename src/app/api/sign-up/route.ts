@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
     if (!email) {
         return new Response(JSON.stringify({ success: false, error: "Email is required" }), {
             status: 400,
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json" },
+            
         });
     }
     if (!password) {
@@ -28,8 +29,16 @@ export async function POST(req: NextRequest) {
         const response = await axios.post(`${process.env.EXPRESS_BACKEND_URL}/api/auth/register`, {
             email,
             password
-        });
-        
+        },{ withCredentials: true });
+
+        if (response.status !== 201) {
+            console.error("Unexpected response status:", response.status);
+            return new Response(JSON.stringify({ success: false, message: response.data.message || "Registration failed" }), {
+                status: response.status,
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
         console.log("Received response from backend:", response.data);
         return new Response(JSON.stringify({ success: true, message: response.data.message }), {
             status: 201,
@@ -37,22 +46,8 @@ export async function POST(req: NextRequest) {
         });
     } catch (error: any) {
         console.error("Error during registration:", error);
-
-        if (error.response) {
-            // Extract status and message from backend error response
-            const statusCode = error.response.status;
-            const backendMessage = error.response.data?.error || error.response.data?.message || "Registration failed";
-
-            return new Response(
-                JSON.stringify({ success: false, error: backendMessage }),
-                {
-                    status: statusCode,
-                    headers: { "Content-Type": "application/json" }
-                }
-            );
-        }
         return new Response(
-            JSON.stringify({ success: false, error: "Failed to register user" }),
+            JSON.stringify({ success: false, error: error.message ||"Failed to register user" }),
             {
                 status: 500,
                 headers: { "Content-Type": "application/json" }

@@ -1,9 +1,22 @@
 import axios from "axios";
 import { NextRequest } from "next/server";
+import { parse } from "cookie";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
+  const cookieHeader = req.headers.get("cookie") || "";
+  const cookies = parse(cookieHeader);
+  const token = cookies.authToken;
+
+  if (!token) {
+    return new Response(JSON.stringify({ success: false, message: "Unauthorized" }), {
+      status: 401,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 
   // chcking if file received or not
   if (!file) {
@@ -34,12 +47,12 @@ export async function POST(req: NextRequest) {
       outgoingForm,
       {
         headers: {
-          Authorization: `Bearer `,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
     console.log("Received response from backend for file upload:", response.data);
-   
+
     if (!response.data.success) {
       return new Response(JSON.stringify({ success: false, error: response.data.error }), {
         status: 400,

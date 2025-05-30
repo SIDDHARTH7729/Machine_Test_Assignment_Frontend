@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { createAgentSchema, CreateAgentSchema } from "@/schema/createAgentSchema"
 import {
   Form,
@@ -66,10 +65,11 @@ export default function CreateAgentForm() {
         password: values.password,
       }
 
+      console.log("Submitting agent creation with payload:", payload)
       const res = await axios.post("/api/createagent", payload, {
         headers: {
           "Content-Type": "application/json",
-        },
+        },withCredentials: true,
       })
 
       if (!res.data.success) {

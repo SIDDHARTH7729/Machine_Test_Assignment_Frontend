@@ -1,5 +1,5 @@
 import Navbar from '@/components/NavBar'
-import { ProfileForm } from '@/components/SignUp'
+import { ProfileForm } from '@/app/(public)/signup/_Components/SignUp'
 import React from 'react'
 
 type Props = {}

@@ -40,6 +40,7 @@ const WorksSection = ({ agentId }: { agentId: string }) => {
             headers: {
               "Content-Type": "application/json",
             },
+            withCredentials:true,
           }
         );
        

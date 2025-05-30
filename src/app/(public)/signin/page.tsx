@@ -1,5 +1,5 @@
 import Navbar from '@/components/NavBar'
-import { SignInForm } from '@/components/SignIn'
+import { SignInForm } from '@/app/(public)/signin/_Components/SignIn'
 import React from 'react'
 
 type Props = {}

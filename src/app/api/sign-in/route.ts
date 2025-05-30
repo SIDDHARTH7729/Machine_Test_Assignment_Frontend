@@ -1,7 +1,7 @@
 import axios from "axios";
 import { NextRequest } from "next/server";
 
-export async function POST(req:NextRequest) {
+export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, password } = body;
     console.log("Received data for signing in on nextjs api")
@@ -20,14 +20,16 @@ export async function POST(req:NextRequest) {
         });
     }
 
+    // make a request to the backend to sign in the user
     console.log("Making request to backend for signing in...");
     try {
-        const response = await axios.post(`${process.env.EXPRESS_BACKEND_URL}/api/auth/login`,{
+        const response = await axios.post(`${process.env.EXPRESS_BACKEND_URL}/api/auth/login`, {
             email,
             password
-        })
+        }, { withCredentials: true })
 
         console.log("Received response from backend for signing in:", response.data);
+        // check if the response indicates success
         if (!response.data.success) {
             return new Response(JSON.stringify({ success: false, error: response.data.error }), {
                 status: 400,
@@ -35,33 +37,28 @@ export async function POST(req:NextRequest) {
             });
         }
 
+        const setCookie = response.headers['set-cookie']
         console.log("Received response from backend for signing in:", response.data);
-        return new Response(JSON.stringify({
-            success: true, 
-            message: response.data.message,
-           }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" }
-        });
-    } catch (error:any) {
-        console.log("Error during signing in : ", error);
 
-        if (error.response) {
-            const statusCode = error.response.status;
-            const backendMessage = error.response.data?.error || error.response.data?.message || "Signing in failed";
-
-            return new Response(
-                JSON.stringify({ success: false, error: backendMessage }),
-                {
-                    status: statusCode,
-                    headers: { "Content-Type": "application/json" }
-                }
-            );
-        }
-        return new Response(
-            JSON.stringify({ success: false, error: "Failed to sign in user" }),
+        // if successful, return the response with cookies
+        return new Response(JSON.stringify({ success: true, message: response.data.message, }),
             {
-                status: 500,
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(response.headers['set-cookie']
+                        ? { "Set-Cookie": response.headers['set-cookie'].join(",") } // converting , since it expects HeadersInit type
+                        : {}),
+                },
+            }
+        );
+    } catch (error: any) {
+        // handle errors from the backend
+        console.log("Error during signing in : ", error);
+        return new Response(
+            JSON.stringify({ success: false, error: error.message || "Failed to sign in user" }),
+            {
+                status: error.statusCode || 500,
                 headers: { "Content-Type": "application/json" }
             }
         );

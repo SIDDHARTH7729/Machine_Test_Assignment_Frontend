@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const createAgentSchema = z.object({
   name: z.string().min(3,{ message: "Name must be at least 3 characters" }),
-  email: z.string().email(),
+  email: z.string().email().endsWith("@gmail.com", { message: "Email must end with @gmail.com" }),
   countryCode: z.string().startsWith("+"),
   phone: z
          .string()

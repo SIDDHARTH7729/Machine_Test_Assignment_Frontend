@@ -5,8 +5,6 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation'
 
 type Props = {}
-
-// Updated interface to match actual API response
 interface Agent {
     _id: string;
     name: string;
@@ -22,8 +20,8 @@ const AllAgents = (props: Props) => {
     const [agents, setAgents] = useState<Agent[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const router = useRouter();
-
-    // Function to format date
+    
+    // formatting the date from response
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -47,7 +45,7 @@ const AllAgents = (props: Props) => {
                 const response = await axios.get('/api/getallagents', {
                     headers: {
                         'Content-Type': 'application/json',
-                    }
+                    },withCredentials:true,
                 });
                 
                 const data = response.data;
@@ -186,7 +184,7 @@ const AllAgents = (props: Props) => {
                             </div>
 
                             <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                                <button onClick={() => handleViewDetails(agent._id)} className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                                <button onClick={() => handleViewDetails(agent._id)} className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors duration-200 cursor-pointer">
                                     View Details
                                 </button>
                             </div>

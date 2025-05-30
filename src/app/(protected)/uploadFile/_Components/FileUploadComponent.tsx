@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react'
 import { UploadFileProps } from '../page';
+import axios from 'axios';
 interface ResultType{
   setResult: (result:UploadFileProps ) => void;
 }
@@ -14,6 +15,7 @@ const FileUpload = ({setResult}:ResultType) => {
   const [error, setError] = useState<string | null>(null)
   const [dragOver, setDragOver] = useState(false)
   
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -51,25 +53,26 @@ const FileUpload = ({setResult}:ResultType) => {
       setMessage(null)
       return
     }
-
     const formData = new FormData()
     formData.append('file', file)
-
     setLoading(true)
     setError(null)
     setMessage(null)
 
     try {
-      const response = await fetch('/api/uploadFile', {
-        method: 'POST',
-        body: formData
+      const response = await axios.post("/api/uploadFile", formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },withCredentials:true,
       })
 
-      const data = await response.json()
-
+      // get response data from apii route
+      const data = await response.data;
+      console.log("Response from upload API:", data.data.data)
       if (data.success) {
         setMessage("File uploaded and processed successfully.")
         setFile(null)
+        setResult(data.data.data)
       } else {
         setError(data.message || "Upload failed.")
       }

@@ -17,12 +17,17 @@ import {
 import { Input } from "@/components/ui/input"
 import { formSchema, FormSchema } from "@/schema/formSchema"
 import React from "react"
+import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
+import {motion} from "framer-motion"
+import Link from "next/link"
 
 export function ProfileForm() {
 
     const [emailError,setEmailError] = React.useState("")
     const [passwordError,setPasswordError] = React.useState("")
     const [isSubmitting,setisSubmitting] = React.useState(false)
+    const router = useRouter();
 
     const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
@@ -54,9 +59,15 @@ export function ProfileForm() {
                 }
             }
             else{
-                console.log("Signup successful")
+                toast.success("SignUp successful")
+                form.reset()
+                setEmailError("")
+                setPasswordError("")
+                router.push("/signin");
+
             }
         } catch (error:any) {
+            console.log(error)
             console.log("Error calling SignUp API:", error.message)
             if (error.response && error.response.data) {
                 const apiError = error.response.data.error;
@@ -77,7 +88,12 @@ export function ProfileForm() {
     }
 
     return (
-        <Form {...form}>
+        <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
+            <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-black/90 p-24 rounded-lg max-w-xl hover:shadow-[20px_-10px_10px_rgba(0,0,0,0.8)] transition-shadow duration-300 ease-in-out shadow-lg mx-auto mt-10 hover:scale-[1.02]">
                 <div className="flex items-center justify-center mb-6">
                     <p className="text-white mr-2 pt-4 font-bold">Signup to </p>
@@ -123,7 +139,9 @@ export function ProfileForm() {
                 <Button type="submit" disabled={isSubmitting} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-xl cursor-pointer">
                     Submit
                 </Button>
+                <p className="text-white mt-4">Already have an account? <Link href="/signin" className="text-blue-600 hover:text-blue-800 transition-colors duration-200">Sign In</Link></p>
             </form>
         </Form>
+        </motion.div>
     )
 }

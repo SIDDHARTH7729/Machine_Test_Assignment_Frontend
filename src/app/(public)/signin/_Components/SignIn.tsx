@@ -16,12 +16,17 @@ import {
 import { Input } from "@/components/ui/input"
 import { formSchema, FormSchema } from "@/schema/formSchema"
 import React from "react"
+import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
+import { motion } from "framer-motion"
+import Link from "next/link"
 
 export function SignInForm() {
 
     const [emailError, setEmailError] = React.useState("")
     const [passwordError, setPasswordError] = React.useState("")
     const [isSubmitting, setisSubmitting] = React.useState(false)
+    const router = useRouter();
 
     const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
@@ -31,7 +36,7 @@ export function SignInForm() {
         },
     })
 
-    // 2. Define a submit handler.
+    // submit handler for signin form
     async function onSubmit(values: z.infer<typeof formSchema>) {
         console.log("Form submitted with values:", values)
         setisSubmitting(true)
@@ -40,7 +45,7 @@ export function SignInForm() {
             const response = await axios.post("/api/sign-in", {
                 email: values.email,
                 password: values.password
-            })
+            },{withCredentials: true})
 
             console.log("Response from SignIp API:", response.data)
             const data = response.data
@@ -52,10 +57,11 @@ export function SignInForm() {
                     setPasswordError(data.error)
                 }
             } else {
-                console.log("SignIn successful")
+                toast.success("SignIn successful")
                 form.reset()
                 setEmailError("")
                 setPasswordError("")
+                router.push("/homepage");
             }
 
         } catch (error: any) {
@@ -70,16 +76,20 @@ export function SignInForm() {
                     console.error("Unhandled API error:", apiError);
                 }
             } else {
-                console.error("API error is missing or not a string:", error.response?.data);
+                toast.error("An unexpected error occurred. Please try again later.");
             }
         } finally {
             setisSubmitting(false);
         }
     }
 
-
     return (
-        <Form {...form}>
+        <motion.div
+            initial={{ opacity: 0, x: 80 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+        >
+            <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-black/90 p-24 rounded-lg max-w-xl hover:shadow-[20px_-10px_10px_rgba(0,0,0,0.8)] transition-shadow duration-300 ease-in-out shadow-lg mx-auto mt-10 hover:scale-[1.02]">
                 <div className="flex items-center justify-center mb-6">
                     <p className="text-white mr-2 pt-4 font-bold">SignIn to </p>
@@ -125,7 +135,9 @@ export function SignInForm() {
                 <Button type="submit" disabled={isSubmitting} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-xl cursor-pointer">
                     {isSubmitting ? "Signing In..." : "Sign In"}
                 </Button>
+                <p className="text-white mt-4">Don't have an account? <Link href="/signup" className="text-blue-600 hover:text-blue-800 transition-colors duration-200">Sign Up</Link></p>
             </form>
         </Form>
+        </motion.div>
     )
 }

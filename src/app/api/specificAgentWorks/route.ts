@@ -1,5 +1,7 @@
+// 
 import axios from "axios";
 import { NextRequest } from "next/server";
+import { parse } from "cookie";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
@@ -12,6 +14,19 @@ export async function POST(req: NextRequest) {
         });
     }
 
+    const cookieHeader = req.headers.get("cookie") || "";
+    const cookies = parse(cookieHeader);
+    const token = cookies.authToken;
+
+    if (!token) {
+        return new Response(JSON.stringify({ success: false, message: "Unauthorized" }), {
+            status: 401,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    }
+
     try {
         console.log("Sending data to backend for Fetching works for agent with ID:", agentId);
         const response = await axios.post(
@@ -20,7 +35,7 @@ export async function POST(req: NextRequest) {
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer `,
+                    Authorization: `Bearer ${token}`,
                 },
             }
         );
