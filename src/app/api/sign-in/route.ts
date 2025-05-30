@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         console.log("Received response from backend for signing in:", response.data);
         // check if the response indicates success
         if (!response.data.success) {
-            return new Response(JSON.stringify({ success: false, error: response.data.error }), {
+            return new Response(JSON.stringify({ success: false, message: response.data.message || "Login failed"}), {
                 status: 400,
                 headers: { "Content-Type": "application/json" }
             });
@@ -56,9 +56,9 @@ export async function POST(req: NextRequest) {
         // handle errors from the backend
         console.log("Error during signing in : ", error);
         return new Response(
-            JSON.stringify({ success: false, error: error.message || "Failed to sign in user" }),
+            JSON.stringify({ success: false, message: error.response.data.message || "Failed to sign in user" }),
             {
-                status: error.statusCode || 500,
+                status: error.response?.statusCode || 500,
                 headers: { "Content-Type": "application/json" }
             }
         );

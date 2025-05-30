@@ -47,14 +47,15 @@ export function SignInForm() {
                 password: values.password
             },{withCredentials: true})
 
-            console.log("Response from SignIp API:", response.data)
             const data = response.data
             if (!data.success) {
                 console.log("API returned error: ", data.error)
-                if (data.error.includes("email")) {
-                    setEmailError(data.error)
-                } else if (data.error.includes("password")) {
-                    setPasswordError(data.error)
+                if (data.message?.toLowerCase().includes("user")) {
+                    setEmailError(data.message)
+                }else if (data.message?.toLowerCase().includes("password")) {
+                    setPasswordError(data.message)
+                }else{
+                    toast.error(data.message || "SignIn failed")
                 }
             } else {
                 toast.success("SignIn successful")
@@ -65,11 +66,10 @@ export function SignInForm() {
             }
 
         } catch (error: any) {
-            console.log("Error calling SignIn API:", error.message)
-            const apiError = error.response?.data?.error;
+            const apiError = error.response?.data?.message;
             if (typeof apiError === "string") {
-                if (apiError.includes("email")) {
-                    setEmailError(apiError);
+                if (apiError.includes("User")) {
+                    toast.error(apiError);
                 } else if (apiError.includes("password")) {
                     setPasswordError(apiError);
                 } else {
